@@ -1,42 +1,47 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEditor.MPE;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 
 public class PlayerController2 : MonoBehaviour
 {
     public float speed = 20f;
     public float xRange = 15f;
     public GameObject projectilePrefab;
-   //float horizontalInput;
 
     public InputActionAsset InputActions;
     private InputAction moveAction;
     private InputAction fireAction;
+    private InputAction pauseActionPlayer;
+    private InputAction pauseActionUI;
+
+    public GameObject stoped;
 
 
-    private InputAction PauseAction;
-    private bool Pause = false;
-    public GameObject Parar;
-
-
-    void Awake() 
-    { 
-        moveAction = InputSystem.actions.FindAction("Move");  
-        fireAction = InputSystem.actions.FindAction("Pizza");                                                                                                           
+    private void OnEnable()
+    {
+        InputActions.FindActionMap("Player").Enable();
     }
-
-    void Start()
-  {
-    Pause = false;
-    Parar.SetActive(false);
-  }
-
-    // Update is called once per frame
+    private void OnDisable()
+    {
+        InputActions.FindActionMap("Player").Disable();
+    }
+    private void Awake()
+    {
+        moveAction = InputSystem.actions.FindAction("Move");
+        fireAction = InputSystem.actions.FindAction("Jump");
+        pauseActionPlayer = InputSystem.actions.FindAction("Player/Pause");
+        pauseActionUI = InputSystem.actions.FindAction("UI/Pause");
+    }
     void Update()
-    { 
-       float horizontalInput = moveAction.ReadValue<Vector2>().x;
-
-       transform.Translate(Vector3.right * speed * Time.deltaTime * horizontalInput);
-       
+    {
+        // float horizontalInput = Input.GetAxis("Horizontal");
+        float horizontalInput = moveAction.ReadValue<Vector2>().x;
+        // movimenta o player para esquerda e direita a partir da entrada do usu�rio
+        transform.Translate(Vector3.right * speed * Time.deltaTime * horizontalInput);
+        // mant�m o player dentro dos limites do jogo (eixo x)
         if (transform.position.x < -xRange)
         {
             transform.position = new Vector3(-xRange, transform.position.y, transform.position.y);
@@ -45,56 +50,40 @@ public class PlayerController2 : MonoBehaviour
         {
             transform.position = new Vector3(xRange, transform.position.y, transform.position.y);
         }
-        
-        if (fireAction.WasPressedThisFrame()) {
-          Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+        // dispara comida ao pressionar barra de espa�o
+
+        if (fireAction.WasPressedThisFrame())
+        {
+            Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
+            StartCoroutine(Ghost(2));
+
         }
-        if(PauseAction.WasPressedThisFrame())
-    {
-      Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
-    }
-    if(PauseAction.WasPressedThisFrame())
-    {
-      if(Pause == false)
-      {
-        OnDisable();
-      }
-      else
-      {
-        OnEnable();
-      }
+
+       PauseGame();
     }
 
-        
+    private IEnumerator Ghost(float waitTime)
+    {
+        // torna player invisível
+        yield return new WaitForSeconds(waitTime);
+        // torna player visível
     }
- //  public void MoveEvent(InputAction.CallbackContext context)
-  //  {
-  //      horizontalInput = context.ReadValue<Vector2>().x;
-//    }             
-    // public void FireEvent(InputAction.CallbackContext context)
-    // {
-    //   //if(Context.) 
-    // //   Debug.Log("pizza"); 
-    // if(context.performed){
-    //   Instantiate(projectilePrefab, transform.position, projectilePrefab.transform.rotation);
-    // }     
-//   }             
-  private void OnEnable() 
-  { 
-    InputActions.FindActionMap("Player").Enable();
-    Pause = false;
-    PauseAction = InputSystem.actions.FindAction("Pause");
-    Parar.SetActive(false);
-    InputActions.FindActionMap("UI").Disable();  
-  }                
-  private void OnDisable() 
-  { 
-    Pause = true;
-    PauseAction =InputSystem.actions.FindAction("Pause");
-    Parar.SetActive(true);
-    InputActions.FindActionMap("UI").Enable();
-    InputActions.FindActionMap("Player").Disable();
-  }
-    
-  }
+
+    private void PauseGame()
+    {
+        if (pauseActionPlayer.WasPressedThisFrame())
+        {
+            InputActions.FindActionMap("Player").Disable();
+            InputActions.FindActionMap("UI").Enable();
+            stoped.SetActive(true);
+
+        }
+        else if (pauseActionUI.WasPressedThisFrame())
+        {
+            InputActions.FindActionMap("Player").Enable();
+            InputActions.FindActionMap("UI").Disable();
+            stoped.SetActive(false);
+        }
+    }
+}
 

@@ -223,7 +223,7 @@
                 {
                     "name": "",
                     "id": "841d9e88-210e-4458-ac46-84cbb4458574",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/Ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -339,7 +339,7 @@
                 {
                     "name": "Ghost",
                     "type": "Button",
-                    "id": "17e584cb-9701-47a0-98f9-7be767601a27",
+                    "id": "d7754c23-88fb-4602-bb58-0241693f76a7",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -778,8 +778,8 @@
                 },
                 {
                     "name": "",
-                    "id": "5fd4cf86-e172-446a-9772-fc3be9b9269e",
-                    "path": "<Keyboard>/f",
+                    "id": "4f4d5920-734c-4be2-9890-ebbda65f4c8d",
+                    "path": "<Keyboard>/Ctrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
